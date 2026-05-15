@@ -28,7 +28,7 @@
 *   **ゲームエンジン:** Unity 2022.3.34f1
 *   **開発言語:** C#
 *   **主な使用アセット、素材:**
-    *   [Pixel Art Woods Tileset and Background] (https://assetstore.unity.com/packages/2d/environments/pixel-art-woods-tileset-and-background-280066)
+    *   [Pixel Art Woods Tileset and Background](https://assetstore.unity.com/packages/2d/environments/pixel-art-woods-tileset-and-background-280066)
     *   [Free Pixel Font - Thaleah](https://assetstore.unity.com/packages/2d/fonts/free-pixel-font-thaleah-140059)
     *   [ぴぽや倉庫](https://pipoya.net/sozai/assets/charachip/character-chip-1/)
 
@@ -39,7 +39,7 @@
 3. `CreateLoad.exe` を実行するとゲームが始まります。
 
 ## ライセンス / 著作権
-*   **SE:** 効果音ラボ(https://soundeffect-lab.info/)
-*   **BGM** DOVA-SYNDROME(https://dova-s.jp/)
+*   **SE:** [効果音ラボ](https://soundeffect-lab.info/)
+*   **BGM** [DOVA-SYNDROME](https://dova-s.jp/)
 
 
