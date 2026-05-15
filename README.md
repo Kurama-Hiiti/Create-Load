@@ -46,6 +46,7 @@
 1. 本リポジトリの [Releases](https://github.com/Kurama-Hiiti/Create-Load/releases) からZIPファイルをダウンロードします。
 2. ダウンロードしたファイルを解凍します。
 3. `CreateLoad.exe` を実行するとゲームが始まります。
+**[UnityRoom](https://unityroom.com/games/createload)にもアップロードしているのでそちらからもプレイできます。**
 
 ## ライセンス / 著作権
 *   **SE:** [効果音ラボ](https://soundeffect-lab.info/)
