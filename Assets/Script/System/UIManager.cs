@@ -16,6 +16,9 @@ public class UIManager : MonoBehaviour
     //シーンの名前
     private string sceneName;
 
+    // インスタンスをキャッシュ
+    private readonly WaitForSeconds waitSeconds = new(1.0f);
+
     private void Awake()
     {
         if (instance == null)
@@ -42,18 +45,18 @@ public class UIManager : MonoBehaviour
     public void Retry()
     {
         SoundManager.instance.PlaySE(0);
-        StartCoroutine("RetryNextWait");
-        //SceneManager.LoadScene(bulidIndex);
+        StartCoroutine(SceneTransition(bulidIndex));
+
     }
 
 
     //ネクストステージ
     public void NextStage()
     {
-        bulidIndex = bulidIndex + 1;
+        bulidIndex++;
         SoundManager.instance.PlaySE(0);
-        StartCoroutine("RetryNextWait");
-        //SceneManager.LoadScene(bulidIndex);
+        StartCoroutine(SceneTransition(bulidIndex));
+
     }
 
     //ステージセレクト
@@ -62,8 +65,8 @@ public class UIManager : MonoBehaviour
         PlayerPrefs.SetInt("Check", 0);
         SoundManager.instance.PlaySE(0);
         Time.timeScale = 1.0f;
-        StartCoroutine("SelectWait");
-        //SceneManager.LoadScene("StageSelect");
+        StartCoroutine(SceneTransition("StageSelect"));
+
     }
 
     //タイトル
@@ -72,154 +75,32 @@ public class UIManager : MonoBehaviour
         PlayerPrefs.SetInt("Check", 0);
         SoundManager.instance.PlaySE(0);
         Time.timeScale = 1.0f;
-        StartCoroutine("TitleWait");
-        //SceneManager.LoadScene("Title");
+        StartCoroutine(SceneTransition("Title"));
+
     }
 
-    public void Stage1()
+    //各ステージへの遷移処理
+    public void StageSceneTransition(int sceneIndex)
     {
         SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage1Wait");
-        //SceneManager.LoadScene("GameMain1");
-    }
-    public void Stage2()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage2Wait");
-        //SceneManager.LoadScene("GameMain2");
-    }
-    public void Stage3()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage3Wait");
-        //SceneManager.LoadScene("GameMain3");
-    }
-    public void Stage4()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage4Wait");
-        //SceneManager.LoadScene("GameMain4");
-    }
-    public void Stage5()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage5Wait");
-        //SceneManager.LoadScene("GameMain5");
-    }
-    public void Stage6()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage6Wait");
-        //SceneManager.LoadScene("GameMain6");
-    }
-    public void Stage7()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage7Wait");
-        //SceneManager.LoadScene("GameMain7");
-    }
-    public void Stage8()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage8Wait");
-        //SceneManager.LoadScene("GameMain8");
-    }
-    public void Stage9()
-    {
-        SoundManager.instance.PlaySE(0);
-        StartCoroutine("Stage9Wait");
-        //SceneManager.LoadScene("GameMain9");
+        StartCoroutine(SceneTransition(sceneIndex));
     }
 
 
     //コルーチン
-
-    private IEnumerator RetryNextWait()
+    private IEnumerator SceneTransition(string sceneName)
     {
-        yield return new WaitForSeconds(1);
+        yield return waitSeconds;
 
-        SceneManager.LoadScene(bulidIndex);
+        SceneManager.LoadScene(sceneName);
     }
 
-
-    private IEnumerator SelectWait()
+    private IEnumerator SceneTransition(int sceneIndex)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return waitSeconds;
 
-        SceneManager.LoadScene("StageSelect");
+        SceneManager.LoadScene(sceneIndex);
     }
 
-
-    private IEnumerator TitleWait()
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        SceneManager.LoadScene("Title");
-    }
-
-
-    private IEnumerator Stage1Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain1");
-    }
-
-
-    private IEnumerator Stage2Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain2");
-    }
-
-    private IEnumerator Stage3Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain3");
-    }
-
-    private IEnumerator Stage4Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain4");
-    }
-
-    private IEnumerator Stage5Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain5");
-    }
-
-    private IEnumerator Stage6Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain6");
-    }
-
-    private IEnumerator Stage7Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain7");
-    }
-
-    private IEnumerator Stage8Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain8");
-    }
-
-    private IEnumerator Stage9Wait()
-    {
-        yield return new WaitForSeconds(1);
-
-        SceneManager.LoadScene("GameMain9");
-    }
 
 }

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//RequireComponent‘®«‚ğ’Ç‰Á‚µ‚ÄˆË‘¶ŠÖŒW‚ğ‹­§‚·‚é
+[RequireComponent(typeof(PlayerHealth))]
 public class PlayerHealthUI : MonoBehaviour
 {
     //‘Ì—ÍUI‚Ì•\¦ŠÇ—

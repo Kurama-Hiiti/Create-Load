@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 
+
+//RequireComponent属性を追加して依存関係を強制する
+[RequireComponent(typeof(PlayerHealth)), RequireComponent(typeof(PlayerHealthUI)), RequireComponent(typeof(Animator)), RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMove : MonoBehaviour
 {
+    //移動速度、ダッシュ速度、ジャンプ力
     [SerializeField]
     private float playerSpeed, dashSpeed, jumpPower;
 
@@ -77,6 +81,12 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Transform startPos, checkPointPos;
 
+    //文字列をハッシュ（int）に変換して事前にキャッシュしておく
+    private static readonly int rightTriggerHash = Animator.StringToHash("Right");
+    private static readonly int leftTriggerHash = Animator.StringToHash("Left");
+    private static readonly int upTriggerHash = Animator.StringToHash("Up");
+
+
     private void Awake()
     {
 
@@ -88,7 +98,7 @@ public class PlayerMove : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
+
     void Start()
     {
         if (checkPoint == 1)
@@ -107,11 +117,12 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (!goal)
         {
+            //ビルドモード解除
             if (buildMode)
             {
                 if (Input.GetKeyDown(KeyCode.E))
@@ -122,8 +133,6 @@ public class PlayerMove : MonoBehaviour
                     mainCamera.GetComponent<Camera>().enabled = true;
                     backGround.SetActive(true);
 
-                    //subCamera.GetComponent<Camera>().enabled = false;
-                    //mainCamera.GetComponent<Camera>().enabled = true;
                 }
                 return;
             }
@@ -131,6 +140,7 @@ public class PlayerMove : MonoBehaviour
             PlayerJump();
             BuildMode();
 
+            //メニュー画面表示
             if (!menu && !buildMode && Input.GetKeyDown(KeyCode.Escape))
             {
                 menu = true;
@@ -139,6 +149,7 @@ public class PlayerMove : MonoBehaviour
                 GameManager.instance.OpenMenu();
             }
 
+            //メニュー画面非表示
             if (menu && Input.GetKeyDown(KeyCode.E))
             {
                 menu = false;
@@ -147,6 +158,7 @@ public class PlayerMove : MonoBehaviour
                 GameManager.instance.CloseMenu();
             }
 
+            //ドアでの移動処理
             if (Input.GetKeyDown(KeyCode.W) && door)
             {
                 SoundManager.instance.PlaySE(9);
@@ -156,10 +168,12 @@ public class PlayerMove : MonoBehaviour
 
         }
 
-        
+        //ゴール処理
         if (goal)
         {
+            //チェックポイントリセット
             PlayerPrefs.SetInt("Check", 0);
+            //クリアUI表示
             GameManager.instance.StageClear();
         }
 
@@ -175,6 +189,7 @@ public class PlayerMove : MonoBehaviour
                 return;
             }
 
+            //敵に当たった場合一定時間移動無効
             if (enemyHit)
             {
                 elapsedTime = Time.time; 
@@ -187,26 +202,28 @@ public class PlayerMove : MonoBehaviour
                 return;
             }
 
+            //ダッシュ時
             if (Input.GetKey(KeyCode.LeftShift))
             {
-
+                //右への入力
                 if (Input.GetAxisRaw("Horizontal") > 0 && !IsRightHit())
                 {
                     //キー入力を受け取り移動させる
                     rb.velocity = new Vector2(Input.GetAxis("Horizontal") * dashSpeed, rb.velocity.y);
-                    animator.SetTrigger("Right");
+                    animator.SetTrigger(rightTriggerHash);
 
                 }
-                else if (Input.GetAxisRaw("Horizontal") < 0 && !IsLeftHit())
+                else if (Input.GetAxisRaw("Horizontal") < 0 && !IsLeftHit())//左への入力
                 {
                     //キー入力を受け取り移動させる
                     rb.velocity = new Vector2(Input.GetAxis("Horizontal") * dashSpeed, rb.velocity.y);
-                    animator.SetTrigger("Left");
+                    animator.SetTrigger(leftTriggerHash);
                 }
                 else if (IsGrounded() || IsPedestal())
                 {
                     if (!enemyHit)
                     {
+                        //移動床での処理
                         if (moveFloor)
                         {
                             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y);
@@ -229,13 +246,13 @@ public class PlayerMove : MonoBehaviour
                 {
                     //キー入力を受け取り移動させる
                     rb.velocity = new Vector2(Input.GetAxis("Horizontal") * playerSpeed, rb.velocity.y);
-                    animator.SetTrigger("Right");
+                    animator.SetTrigger(rightTriggerHash);
                 }
                 else if (Input.GetAxisRaw("Horizontal") < 0 && !IsLeftHit())
                 {
                     //キー入力を受け取り移動させる
                     rb.velocity = new Vector2(Input.GetAxis("Horizontal") * playerSpeed, rb.velocity.y);
-                    animator.SetTrigger("Left");
+                    animator.SetTrigger(leftTriggerHash);
                 }
                 else if (IsGrounded() || IsPedestal())
                 {
@@ -262,18 +279,20 @@ public class PlayerMove : MonoBehaviour
 
 
 
+            //梯子を上る処理
             if (Input.GetAxisRaw("Vertical") > 0 && laddar)
             {
                 //キー入力を受け取り移動させる
                 rb.velocity = new Vector2(rb.velocity.x, Input.GetAxisRaw("Vertical") * playerSpeed);
-                animator.SetTrigger("Up");
+                animator.SetTrigger(upTriggerHash);
             }
 
+            //梯子を下る処理
             if (Input.GetAxisRaw("Vertical") < 0 && laddar)
             {
                 //キー入力を受け取り移動させる
                 rb.velocity = new Vector2(rb.velocity.x, Input.GetAxisRaw("Vertical") * playerSpeed);
-                animator.SetTrigger("Up");
+                animator.SetTrigger(upTriggerHash);
             }
 
             
@@ -284,7 +303,7 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-
+    //ジャンプ関数
     private void PlayerJump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
@@ -314,12 +333,13 @@ public class PlayerMove : MonoBehaviour
         return Physics2D.OverlapCircle(groundCheckPos.position, 0.3f, pedestalLayer);
     }
 
-
+    //プレイヤーの右側が壁に接地しているか
     private bool IsRightHit()
     {
         return Physics2D.OverlapBox(rightCheckPos.position, new Vector2(0.1f, 0.6f), 0f, groundLayer);
     }
 
+    //プレイヤーの左側が壁に接地しているか
     private bool IsLeftHit()
     {
         return Physics2D.OverlapBox(leftCheckPos.position, new Vector2(0.1f, 0.6f), 0f, groundLayer);
@@ -328,7 +348,8 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "DeathZone")
+        //落下処理
+        if (collision.gameObject.CompareTag("DeathZone"))
         {
             SoundManager.instance.PlaySE(8);
 
@@ -336,7 +357,8 @@ public class PlayerMove : MonoBehaviour
             GameManager.instance.GameOver();
         }
 
-        if (collision.gameObject.tag == "Goal")
+        //ゴール処理
+        if (collision.gameObject.CompareTag("Goal"))
         {
             if (!goal)
             {
@@ -347,7 +369,8 @@ public class PlayerMove : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "CheckPoint" && checkPoint == 0)
+        //チェックポイント処理（中間地点）
+        if (collision.gameObject.CompareTag("CheckPoint") && checkPoint == 0)
         {
             PlayerPrefs.SetInt("Check", 1);
             checkPoint = PlayerPrefs.GetInt("Check");
@@ -359,16 +382,19 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Laddar")
+        //梯子との接触処理
+        if (collision.gameObject.CompareTag("Laddar"))
         {
             laddar = true;
             rb.velocity = new Vector2(0, 0);
             rb.gravityScale = 0;
         }
 
-        if (collision.gameObject.tag == "Door")
+        //ドアとの接触処理
+        if (collision.gameObject.CompareTag("Door"))
         {
             door = true;
+            //ドアの移動先取得
             teleportPos = collision.GetComponent<Door>().movePos.position;
         }
 
@@ -377,14 +403,16 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Laddar")
+        //梯子からの離れる処理
+        if (collision.gameObject.CompareTag("Laddar"))
         {
             laddar = false;
             rb.velocity = new Vector2(0, 0);
             rb.gravityScale = 1f;
         }
 
-        if (collision.gameObject.tag == "Door")
+        //ドアから離れる処理
+        if (collision.gameObject.CompareTag("Door"))
         {
             door = false;
         }
@@ -392,6 +420,7 @@ public class PlayerMove : MonoBehaviour
 
     }
 
+    //ビルドモード移行関数
     private void BuildMode()
     {
         if (IsPedestal() && Input.GetKeyDown(KeyCode.B))
@@ -401,37 +430,38 @@ public class PlayerMove : MonoBehaviour
             subCamera.SetActive(true); 
             mainCamera.GetComponent<Camera>().enabled = false;
             backGround.SetActive(false);
-            //subCamera.GetComponent<Camera>().enabled = true;
-            //mainCamera.GetComponent<Camera>().enabled = false;
+
         }
     }
 
+    //敵を踏みつけた時の判定
     private bool IsEnmeyHit()
     {
         return Physics2D.OverlapCircle(groundCheckPos.position, 0.2f, enemyLayer);
     }
 
-    //壁用
+    //プレイヤーの右側が敵との接触判定
     private bool IsRightEnemyHit()
     {
         return Physics2D.OverlapBox(rightCheckPos.position, new Vector2(0.1f, 0.6f), 0f, enemyLayer);
     }
 
+    //プレイヤーの左側が敵との接触判定
     private bool IsLeftEnemyHit()
     {
         return Physics2D.OverlapBox(leftCheckPos.position, new Vector2(0.1f, 0.6f), 0f, enemyLayer);
     }
 
+    //プレイヤーの上側が敵との接触判定
     private bool IsHeadEnemyHit()
     {
         return Physics2D.OverlapBox(headCheckPos.position, new Vector2(0.6f, 0.1f), 0f, enemyLayer);
     }
 
+    //シーンビューでの判定確認用処理
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-
-        //Gizmos.DrawWireCube(groundCheckPos.position, new Vector3(0.4f, 0.1f, 0));
 
         Gizmos.DrawWireCube(leftCheckPos.position, new Vector3(0.1f, 0.6f, 0));
 
@@ -445,30 +475,42 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Enemy"))
         {
+            //敵を踏んだ時
             if (IsEnmeyHit())
             {
+                //SE
                 SoundManager.instance.PlaySE(2);
+                //踏んだ反動でのジャンプ
                 rb.AddForce(new Vector2(0f, jumpPower), ForceMode2D.Impulse);
 
+                //接触した敵の死亡フラグ更新
                 collision.gameObject.GetComponent<EnemyMove>().isdeath = true;
 
             }
 
+            //敵と接触したとき（右側）
             if (IsRightEnemyHit() && !enemyHit)
             {
+                //SE
                 SoundManager.instance.PlaySE(4);
+                //敵との接触フラグ更新
                 enemyHit = true;
+                //ダメージヒット時間設定
                 takeDamageTime = Time.time;
 
+                //体力更新
                 health.TakeDamage(1);
+                //体力UI更新
                 healthUI.SubtractHealth(1);
 
+                //プレイヤーの速度を0にしたのちにノックバック処理
                 rb.velocity = new Vector2(0f, 0f);
                 rb.AddForce(new Vector2(-knockBackX, knockBackY), ForceMode2D.Impulse);
             }
 
+            //敵と接触したとき（左側）
             if (IsLeftEnemyHit() && !enemyHit)
             {
                 SoundManager.instance.PlaySE(4);
@@ -482,6 +524,7 @@ public class PlayerMove : MonoBehaviour
                 rb.AddForce(new Vector2(knockBackX, knockBackY), ForceMode2D.Impulse);
             }
 
+            //敵と接触したとき（上側）
             if (IsHeadEnemyHit() && !enemyHit)
             {
                 SoundManager.instance.PlaySE(4);
@@ -498,7 +541,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         //アイテムで体力回復
-        if (collision.gameObject.tag == "Item")
+        if (collision.gameObject.CompareTag("Item"))
         {
             health.Heal(1);
             healthUI.HealHealth(1);
@@ -507,8 +550,8 @@ public class PlayerMove : MonoBehaviour
             Destroy(collision.gameObject);
         }
 
-
-        if (collision.gameObject.tag == "MoveFloor")
+        //移動床接触判定
+        if (collision.gameObject.CompareTag("MoveFloor"))
         {
             moveFloor = true;
         }
@@ -517,8 +560,8 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        
-        if (collision.gameObject.tag == "MoveFloor")
+        //移動床離脱判定
+        if (collision.gameObject.CompareTag("MoveFloor"))
         {
             moveFloor = false;
         }

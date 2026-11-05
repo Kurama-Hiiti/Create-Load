@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
+
+//RequireComponent属性を追加して依存関係を強制する
+[RequireComponent(typeof(Rigidbody2D))]
 public class BuildMaterial : MonoBehaviour
 {
     private PlayerMove player;
@@ -27,13 +30,7 @@ public class BuildMaterial : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if (player.buildMode)
@@ -43,18 +40,19 @@ public class BuildMaterial : MonoBehaviour
                 mousePos = Input.mousePosition;
                 screenToWorldPointPosition = cam.ScreenToWorldPoint(mousePos);
 
+                //マウスの位置にオブジェクトを移動させる
                 transform.position = screenToWorldPointPosition;
 
                 
-
+                //オブジェクト操作中に回転処理（A、D）
                 if (Input.GetAxisRaw("Horizontal") < 0)
                 {
-                    transform.Rotate(0, 0, 1);
+                    transform.Rotate(0, 0, 0.1f);
                 }
 
                 if (Input.GetAxisRaw("Horizontal") > 0)
                 {
-                    transform.Rotate(0, 0, -1);
+                    transform.Rotate(0, 0, -0.1f);
                 }
 
             }
@@ -68,7 +66,9 @@ public class BuildMaterial : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "BuildFieldLeft")
+        //上下左右の範囲操作範囲外へオブジェクトが触れた際に位置を操作範囲内に戻し選択を解除する
+
+        if (collision.gameObject.CompareTag("BuildFieldLeft"))
         {
             onClick = false;
 
@@ -76,7 +76,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(1.5f, 0, 0);
+            Vector3 offSet = new (1.5f, 0, 0);
 
             myPos.x = collisonPos.x + offSet.x;
 
@@ -84,7 +84,7 @@ public class BuildMaterial : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "BuildFieldRight")
+        if (collision.gameObject.CompareTag("BuildFieldRight"))
         {
             onClick = false;
 
@@ -92,7 +92,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(1.5f, 0, 0);
+            Vector3 offSet = new (1.5f, 0, 0);
 
             myPos.x = collisonPos.x - offSet.x;
 
@@ -100,7 +100,7 @@ public class BuildMaterial : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "BuildFieldTop")
+        if (collision.gameObject.CompareTag("BuildFieldTop"))
         {
             onClick = false;
 
@@ -108,7 +108,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(0, 0.5f, 0);
+            Vector3 offSet = new (0, 0.5f, 0);
 
             myPos.y = collisonPos.y - offSet.y;
 
@@ -116,7 +116,7 @@ public class BuildMaterial : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "BuildFieldBottom")
+        if (collision.gameObject.CompareTag("BuildFieldBottom"))
         {
             onClick = false;
 
@@ -124,7 +124,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(0, 0.5f, 0);
+            Vector3 offSet = new (0, 0.5f, 0);
 
             myPos.y = collisonPos.y + offSet.y;
 
@@ -136,7 +136,9 @@ public class BuildMaterial : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "BuildFieldLeft")
+        //上下左右の範囲操作範囲外へオブジェクトが触れた際に位置を操作範囲内に戻し選択を解除する
+
+        if (collision.gameObject.CompareTag("BuildFieldLeft"))
         {
             onClick = false;
 
@@ -144,7 +146,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(1.5f, 0, 0);
+            Vector3 offSet = new (1.5f, 0, 0);
 
             myPos.x = collisonPos.x + offSet.x;
 
@@ -152,7 +154,7 @@ public class BuildMaterial : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "BuildFieldRight")
+        if (collision.gameObject.CompareTag("BuildFieldRight"))
         {
             onClick = false;
 
@@ -160,7 +162,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(1.5f, 0, 0);
+            Vector3 offSet = new (1.5f, 0, 0);
 
             myPos.x = collisonPos.x - offSet.x;
 
@@ -168,7 +170,7 @@ public class BuildMaterial : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "BuildFieldTop")
+        if (collision.gameObject.CompareTag("BuildFieldTop"))
         {
             onClick = false;
 
@@ -176,7 +178,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(0, 0.5f, 0);
+            Vector3 offSet = new (0, 0.5f, 0);
 
             myPos.y = collisonPos.y - offSet.y;
 
@@ -184,7 +186,7 @@ public class BuildMaterial : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "BuildFieldBottom")
+        if (collision.gameObject.CompareTag("BuildFieldBottom"))
         {
             onClick = false;
 
@@ -192,7 +194,7 @@ public class BuildMaterial : MonoBehaviour
 
             Vector3 collisonPos = collision.transform.position;
 
-            Vector3 offSet = new Vector3(0, 0.5f, 0);
+            Vector3 offSet = new (0, 0.5f, 0);
 
             myPos.y = collisonPos.y + offSet.y;
 

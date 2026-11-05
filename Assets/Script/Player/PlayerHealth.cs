@@ -6,7 +6,6 @@ public class PlayerHealth : MonoBehaviour
 {
 
     //最大体力、現在の体力
-    [SerializeField]
     public int maxHealth = 5;
     public int health;
 
@@ -14,14 +13,6 @@ public class PlayerHealth : MonoBehaviour
     {
         health = maxHealth;
     }
-
-
-    //体力があるかの判定関数
-    public bool IsAllive()
-    {
-        return health > 0 ? true : false;
-    }
-
 
     //死亡時のオブジェクトの削除関数
     public void Destroy()

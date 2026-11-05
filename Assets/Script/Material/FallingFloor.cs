@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//RequireComponent属性を追加して依存関係を強制する
+[RequireComponent(typeof(Rigidbody2D))]
 public class FallingFloor : MonoBehaviour
 {
+    //初期位置（足場復活位置）
     private Vector3 initialPos;
 
+    //オブジェクトの基準位置（床を振動させる際の基準位置）
     private Vector3 objPos;
 
     private Rigidbody2D rb;
@@ -32,6 +36,7 @@ public class FallingFloor : MonoBehaviour
     private float shakeTime;
 
     private bool isRide = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -39,13 +44,8 @@ public class FallingFloor : MonoBehaviour
         initialPos = transform.position;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (IsPlayer() && !isRide)
@@ -57,12 +57,13 @@ public class FallingFloor : MonoBehaviour
 
     }
 
-
+    //プレイヤーが乗ったのか判定
     private bool IsPlayer()
     {
         return Physics2D.OverlapBox(playerCheckPos.position, new Vector2(0.9f, 0.1f), 0f, playerLayer);
     }
 
+    //シーンビュー確認用
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -81,10 +82,10 @@ public class FallingFloor : MonoBehaviour
     public void ShakeObj(float shaketime)
     {
         //0.01秒間隔で揺らす
-        InvokeRepeating("Shake", 0f, 0.01f);
+        InvokeRepeating(nameof(Shake), 0f, 0.01f);
 
         //止める
-        Invoke("StopShaking", shaketime);
+        Invoke(nameof(StopShaking), shaketime);
 
     }
 
@@ -110,16 +111,19 @@ public class FallingFloor : MonoBehaviour
     //揺れを止める関数
     void StopShaking()
     {
-        CancelInvoke("Shake");
+        CancelInvoke(nameof(Shake));
 
+        //振動後初期位置に戻す
         transform.position = initialPos;
 
+        //落下
         Fall();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "DeathZone")
+        //落下しきったら初期位置へ移動
+        if (collision.gameObject.CompareTag("DeathZone"))
         {
             this.gameObject.SetActive(false);
             isRide = false;
