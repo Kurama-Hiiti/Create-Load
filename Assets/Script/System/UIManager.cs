@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
     private Scene scene;
 
     //シーン番号
-    private int bulidIndex;
+    private int buildIndex;
 
     //シーンの名前
     private string sceneName;
@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     {
         scene = SceneManager.GetActiveScene();
 
-        bulidIndex = scene.buildIndex;
+        buildIndex = scene.buildIndex;
 
         sceneName = scene.name;
     }
@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
     public void Retry()
     {
         SoundManager.instance.PlaySE(0);
-        StartCoroutine(SceneTransition(bulidIndex));
+        StartCoroutine(SceneTransition(sceneName));
 
     }
 
@@ -53,9 +53,9 @@ public class UIManager : MonoBehaviour
     //ネクストステージ
     public void NextStage()
     {
-        bulidIndex++;
+        buildIndex++;
         SoundManager.instance.PlaySE(0);
-        StartCoroutine(SceneTransition(bulidIndex));
+        StartCoroutine(SceneTransition(buildIndex));
 
     }
 
