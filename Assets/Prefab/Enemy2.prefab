@@ -200,7 +200,7 @@ MonoBehaviour:
   dir: -1
   isdeath: 0
   heart: {fileID: 4798581041904399607, guid: f87a08a9d5a99be46b22ef3ba0fdfd30, type: 3}
-  dropRato: 50
+  dropRate: 50
   headCheckPos: {fileID: 4684373779126370228}
   rightCheckPos: {fileID: 2971611359087665425}
   leftCheckPos: {fileID: 1287357812085313823}

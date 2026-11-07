@@ -51,6 +51,9 @@ public class PlayerMove : MonoBehaviour
     //ゴールフラグ
     private bool goal;
 
+    //ゴールチェック
+    private bool goalCheck;
+
     //メニュー表示
     private bool menu;
 
@@ -114,6 +117,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         goal = false;
         menu = false;
+        goalCheck = false;
 
     }
 
@@ -171,6 +175,9 @@ public class PlayerMove : MonoBehaviour
         //ゴール処理
         if (goal)
         {
+            if (goalCheck) return;
+
+            goalCheck = true;
             //チェックポイントリセット
             PlayerPrefs.SetInt("Check", 0);
             //クリアUI表示
@@ -351,10 +358,9 @@ public class PlayerMove : MonoBehaviour
         //落下処理
         if (collision.gameObject.CompareTag("DeathZone"))
         {
-            SoundManager.instance.PlaySE(8);
 
             Destroy(gameObject);
-            GameManager.instance.GameOver();
+            GameManager.instance.GameOver();// 後で変更検討
         }
 
         //ゴール処理
@@ -502,8 +508,6 @@ public class PlayerMove : MonoBehaviour
 
                 //体力更新
                 health.TakeDamage(1);
-                //体力UI更新
-                healthUI.SubtractHealth(1);
 
                 //プレイヤーの速度を0にしたのちにノックバック処理
                 rb.velocity = new Vector2(0f, 0f);
@@ -518,7 +522,6 @@ public class PlayerMove : MonoBehaviour
                 takeDamageTime = Time.time;
 
                 health.TakeDamage(1);
-                healthUI.SubtractHealth(1);
 
                 rb.velocity = new Vector2(0f, 0f);
                 rb.AddForce(new Vector2(knockBackX, knockBackY), ForceMode2D.Impulse);
@@ -532,7 +535,6 @@ public class PlayerMove : MonoBehaviour
                 takeDamageTime = Time.time;
 
                 health.TakeDamage(1);
-                healthUI.SubtractHealth(1);
 
                 rb.velocity = new Vector2(0f, 0f);
                 rb.AddForce(new Vector2(0, -knockBackY), ForceMode2D.Impulse);
@@ -544,7 +546,6 @@ public class PlayerMove : MonoBehaviour
         if (collision.gameObject.CompareTag("Item"))
         {
             health.Heal(1);
-            healthUI.HealHealth(1);
             SoundManager.instance.PlaySE(3);
 
             Destroy(collision.gameObject);

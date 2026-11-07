@@ -13,59 +13,49 @@ public class PlayerHealthUI : MonoBehaviour
     [SerializeField]
     private GameObject[] healthHearts;
 
-    //現在表示しているハートの数,現在の体力
-    public int currentHealthIndex, health;
-
     //体力スクリプト格納
     private PlayerHealth playerHealth;
 
 
-    private void Start()
+    private void Awake()
     {
         playerHealth = GetComponent<PlayerHealth>();
-
-        health = playerHealth.health;
-
-        currentHealthIndex = health - 1;
-
     }
 
-
-    //ダメージでハートの表示数を減らす関数
-    public void SubtractHealth(int damageAmount)
+    private void OnEnable()
     {
-        for (int i = 0; i < damageAmount; i++)
+        if (playerHealth != null)
         {
-            healthHearts[currentHealthIndex].SetActive(false);
-
-            currentHealthIndex--;
-            health--;
-
-            if (health <= 0)
-            {
-                GameManager.instance.GameOver();
-
-                break;
-            }
-
+            playerHealth.OnHealthChanged += UpdateHealthUI;
         }
     }
 
-    //アイテムで回復する関数
-
-    public void HealHealth(int healAmount)
+    private void OnDisable()
     {
-        for (int i = 0; i < healAmount; i++)
+        if (playerHealth != null)
         {
-            if (health < playerHealth.maxHealth)
-            {
-                currentHealthIndex++;
-                health++;
-
-                healthHearts[currentHealthIndex].SetActive(true);
-            }
-
+            playerHealth.OnHealthChanged -= UpdateHealthUI;
         }
     }
+
+
+    private void Start()
+    {
+
+        UpdateHealthUI(playerHealth.Health,healthHearts.Length);
+
+    }
+
+
+    //UI更新処理
+    private void UpdateHealthUI(int currentHealth, int maxHealth)
+    {
+
+        for (int i = 0; i < healthHearts.Length; i++)
+        {
+            healthHearts[i].SetActive(i < currentHealth);
+        }
+    }
+
 
 }

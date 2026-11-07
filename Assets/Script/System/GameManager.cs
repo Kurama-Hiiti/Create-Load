@@ -18,6 +18,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject gameOverPanel, stageClearPanel, menuPanel;
 
+    private PlayerHealth playerHealth;
+
+    private bool isGameOver;
+
     private void Awake()
     {
         if (instance == null)
@@ -35,6 +39,18 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         player = GameObject.FindWithTag("Player").GetComponent<PlayerMove>();
+
+        playerHealth = player.GetComponent<PlayerHealth>();
+
+        playerHealth.OnDied += GameOver;
+    }
+
+    private void OnDestroy()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.OnDied -= GameOver;
+        }
     }
 
     void Update()
@@ -67,7 +83,13 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (isGameOver) return;
+
+        isGameOver = true;
+
+        SoundManager.instance.PlaySE(8);
         gameOverPanel.SetActive(true);
+
     }
 
     public void StageClear()
