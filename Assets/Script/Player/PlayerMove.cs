@@ -359,8 +359,7 @@ public class PlayerMove : MonoBehaviour
         if (collision.gameObject.CompareTag("DeathZone"))
         {
 
-            Destroy(gameObject);
-            GameManager.instance.GameOver();// Œã‚Å•ÏXŒŸ“¢
+            health.Die();
         }
 
         //ƒS[ƒ‹ˆ—

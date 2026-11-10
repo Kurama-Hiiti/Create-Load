@@ -40,13 +40,27 @@ public class PlayerHealth : MonoBehaviour
 
         if (Health <= 0)
         {
-            isDead = true;
-
-            OnDied?.Invoke();
-
-            Destroy(gameObject);
+            Die();
+            return;
         }
 
+    }
+
+    // プレイヤー死亡処理
+    public void Die()
+    {
+        if (isDead) return;
+
+        isDead = true;
+        Health = 0;
+
+        // 体力変更を通知
+        OnHealthChanged?.Invoke(Health, maxHealth);
+
+        // 死亡を通知
+        OnDied?.Invoke();
+
+        Destroy(gameObject);
     }
 
     //アイテムで体力回復
