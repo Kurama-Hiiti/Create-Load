@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spwan : MonoBehaviour
+public class Spawn : MonoBehaviour
 {
     [SerializeField]
     private GameObject enemy;
